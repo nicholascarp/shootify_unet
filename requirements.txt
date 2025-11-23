@@ -1,0 +1,18 @@
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+pillow>=9.0.0
+opencv-python>=4.7.0
+
+# Training and evaluation
+tqdm>=4.65.0
+matplotlib>=3.7.0
+pyyaml>=6.0
+
+# Data processing
+pandas>=2.0.0
+
+# Optional: for advanced features
+# scikit-image>=0.20.0
+# tensorboard>=2.12.0

@@ -1,0 +1,44 @@
+# Shootify Color Correction Configuration
+
+# Data paths
+data:
+  train_manifest: "data/train_manifest.csv"
+  test_manifest: "data/test_manifest.csv"
+  cache_dir: "data/cache"
+
+# Model configuration
+model:
+  in_channels: 7  # degraded (3) + mask (1) + color_cond (3)
+  out_channels: 3  # RGB correction
+
+# Training configuration
+training:
+  epochs: 10
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  num_workers: 2
+  pin_memory: true
+  img_size: 256
+  
+  # Optimization
+  use_amp: true  # Mixed precision training
+  gradient_accumulation: 1
+  
+  # Loss weights
+  mask_weight: 2.0  # Weight for masked loss
+  
+  # Degradation
+  degradation_strength: 0.5
+
+# Evaluation configuration
+evaluation:
+  batch_size: 4
+  num_workers: 2
+  img_size: 256
+
+# Reproducibility
+seed: 42
+
+# Device
+device: "mps"  # or "cpu"
