@@ -170,15 +170,17 @@ def main(args):
     corrected = correct_colors(model, degraded, mask, reference, device)
     print(f"✅ Color correction complete")
     
-    # Convert to numpy for saving - remove batch dimension first
-    corrected_np = corrected.squeeze(0).cpu().permute(1, 2, 0).numpy()
-    corrected_np = (corrected_np * 255).clip(0, 255).astype(np.uint8)
+    # Convert to numpy for visualization first (keep in [0,1] range as float)
+    corrected_np_float = corrected.squeeze(0).cpu().permute(1, 2, 0).numpy()
+    
+    # Convert to uint8 ONLY for saving the output file
+    corrected_np_uint8 = (corrected_np_float * 255).clip(0, 255).astype(np.uint8)
     
     # Save output
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
-    Image.fromarray(corrected_np).save(output_path)
+    Image.fromarray(corrected_np_uint8).save(output_path)
     print(f"\n💾 Output saved to: {output_path}")
     
     # Create visualization if requested
@@ -198,9 +200,9 @@ def main(args):
         original_np = original.squeeze(0).cpu().permute(1, 2, 0).numpy()
 
         visualize_results(
-            from_numpy(original_np).permute(2, 0, 1),      # Original (clean)
-            from_numpy(degraded_np).permute(2, 0, 1),      # Degraded (with color shift)
-            from_numpy(corrected_np).permute(2, 0, 1),     # Corrected (model output)
+            from_numpy(original_np).permute(2, 0, 1),          # Original (clean)
+            from_numpy(degraded_np).permute(2, 0, 1),          # Degraded (with color shift)
+            from_numpy(corrected_np_float).permute(2, 0, 1),   # Corrected - FIXED: Use float version!
             from_numpy(mask_np),
             save_path=viz_path
         )
