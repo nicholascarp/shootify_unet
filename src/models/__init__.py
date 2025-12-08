@@ -1,7 +1,9 @@
 """
-Models package
+Neural network architectures for color correction
 """
 
-from .unet import FastColorCorrectionUNet, FastConvBlock
+from .fast_unet import MinimalUNet
 
-__all__ = ['FastColorCorrectionUNet', 'FastConvBlock']
+__all__ = [
+    'MinimalUNet',
+]

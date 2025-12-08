@@ -9,7 +9,7 @@ import numpy as np
 
 def compute_color_accuracy(pred, target, mask):
     """
-    Compute color accuracy in masked region
+    Compute color accuracy in masked region (normalized by mask area)
     
     Args:
         pred: [B, 3, H, W] - Predicted image
@@ -17,16 +17,22 @@ def compute_color_accuracy(pred, target, mask):
         mask: [B, 1, H, W] - Binary mask
     
     Returns:
-        Mean absolute color difference in masked region
+        Mean absolute color difference per pixel in masked region
     """
     mask_3ch = mask.expand(-1, 3, -1, -1)
-    color_diff = (pred * mask_3ch - target * mask_3ch).abs().mean()
-    return color_diff.item()
-
+    
+    # NEW: Compute error without averaging
+    color_diff = (pred * mask_3ch - target * mask_3ch).abs()
+    
+    # NEW: Normalize by mask area only
+    mask_area = mask_3ch.sum() + 1e-8  # Avoid division by zero
+    color_mae = color_diff.sum() / mask_area  # ✅ Divides by mask pixels only
+    
+    return color_mae.item()
 
 def compute_mse(pred, target, mask=None):
     """
-    Compute MSE (optionally masked)
+    Compute MSE (optionally masked and normalized by mask area)
     
     Args:
         pred: [B, 3, H, W] - Predicted image
@@ -34,15 +40,22 @@ def compute_mse(pred, target, mask=None):
         mask: [B, 1, H, W] - Optional mask
     
     Returns:
-        MSE value
+        MSE value (normalized by mask area if mask provided)
     """
     if mask is not None:
         mask_3ch = mask.expand(-1, 3, -1, -1)
-        pred = pred * mask_3ch
-        target = target * mask_3ch
-    
-    return F.mse_loss(pred, target).item()
-
+        
+        # NEW: Compute squared error (don't zero out inputs)
+        squared_error = ((pred - target) * mask_3ch).pow(2)
+        
+        # NEW: Normalize by mask area only
+        mask_area = mask_3ch.sum() + 1e-8
+        mse = squared_error.sum() / mask_area  # ✅ Divides by mask pixels only
+        
+        return mse.item()
+    else:
+        # Global MSE (no normalization needed)
+        return F.mse_loss(pred, target).item()
 
 def compute_psnr(pred, target, mask=None):
     """
