@@ -10,7 +10,37 @@
 **Performance:** 80% success rate | Color MAE 0.034 | PSNR 26.50 dB | 380K parameters | ~3s inference (CPU)
 
 ---
+## 🚀 **Installation**
 
+### **Requirements**
+
+```bash
+Python >= 3.8
+PyTorch >= 2.0
+torchvision
+PIL (Pillow)
+numpy
+pandas
+tqdm
+matplotlib
+```
+
+### **Setup**
+
+```bash
+# Clone repository
+git clone <repository_url>
+cd cloth-color-correction
+
+# Install dependencies
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install pillow numpy pandas tqdm matplotlib
+
+# Verify installation
+python -c "import torch; print(f'PyTorch {torch.__version__}')"
+```
+
+---
 ## 🔥 **Quick Start**
 
 **Complete workflow in 5 steps:**
@@ -72,37 +102,6 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ---
 
-## 🚀 **Installation**
-
-### **Requirements**
-
-```bash
-Python >= 3.8
-PyTorch >= 2.0
-torchvision
-PIL (Pillow)
-numpy
-pandas
-tqdm
-matplotlib
-```
-
-### **Setup**
-
-```bash
-# Clone repository
-git clone <repository_url>
-cd cloth-color-correction
-
-# Install dependencies
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-pip install pillow numpy pandas tqdm matplotlib
-
-# Verify installation
-python -c "import torch; print(f'PyTorch {torch.__version__}')"
-```
-
----
 
 ## 🎯 **Key Features**
 
