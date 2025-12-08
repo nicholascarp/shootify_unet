@@ -7,9 +7,52 @@
 
 **Deep learning model for correcting color degradation in virtual try-on images using lighting-aware cloth references.**
 
+**Performance:** 80% success rate | Color MAE 0.034 | PSNR 26.50 dB | 380K parameters | ~3s inference (CPU)
+
 ---
 
-## 📊 **Performance**
+## 🔥 **Quick Start**
+
+**Complete workflow in 5 steps:**
+
+```bash
+# 1. Create manifests
+python scripts/create_cloth_manifest.py
+
+# 2. Validate degradation (optional but recommended)
+python scripts/validate_degradation_comprehensive.py --num-samples 1000
+
+# 3. Train model
+python scripts/train.py \
+    --train-manifest data/train_manifest.csv \
+    --test-manifest data/test_manifest.csv \
+    --epochs 15
+
+# 4. Evaluate
+python scripts/evaluate_model_minimal.py \
+    --checkpoint outputs/model_best.pth \
+    --test-manifest data/test_manifest.csv
+
+# 5. Visualize results
+python scripts/batch_inference_test.py \
+    --checkpoint outputs/model_best.pth \
+    --num-samples 15
+```
+
+**Expected time:** ~2 days (mostly training: ~40 hours on CPU)
+
+**Expected output:**
+```
+Step 1: data/train_manifest.csv (11,647 samples), data/test_manifest.csv (2,032 samples)
+Step 2: ✅ EXCELLENT! Degradation works reliably (<1% failures)
+Step 3: outputs/model_best.pth (380K params, ~1.5 MB)
+Step 4: Color MAE: 0.034, PSNR: 26.50 dB, Success: 80%
+Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
+```
+
+---
+
+## 📊 **Performance Summary**
 
 | Metric | Value | Status |
 |--------|-------|--------|
@@ -19,11 +62,51 @@
 | **Model Size** | 380K params | ✅ Lightweight |
 | **Inference Speed** | ~3s/image (CPU) | ✅ Fast |
 
+**Comparison with previous versions:**
+
+| Model | Color MAE | PSNR (dB) | Improvement |
+|-------|-----------|-----------|-------------|
+| V2 Smooth | 0.084 | 17.14 | Baseline |
+| V2.1 Original | 0.068 | 18.81 | +19% |
+| **V2.2 Lighting** | **0.034** | **26.50** | **+50%** ✅ |
+
+---
+
+## 🚀 **Installation**
+
+### **Requirements**
+
+```bash
+Python >= 3.8
+PyTorch >= 2.0
+torchvision
+PIL (Pillow)
+numpy
+pandas
+tqdm
+matplotlib
+```
+
+### **Setup**
+
+```bash
+# Clone repository
+git clone <repository_url>
+cd cloth-color-correction
+
+# Install dependencies
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install pillow numpy pandas tqdm matplotlib
+
+# Verify installation
+python -c "import torch; print(f'PyTorch {torch.__version__}')"
+```
+
 ---
 
 ## 🎯 **Key Features**
 
-### **1. Lighting-Aware Cloth Preprocessing**
+### **1. Lighting-Aware Cloth Preprocessing** ⭐
 - Extracts mean color from cloth reference
 - Preserves lighting pattern from on-model garment
 - Combines color + lighting for realistic cloth reference
@@ -33,7 +116,7 @@
 - **Multiplicative component**: Works on bright colors
 - **Additive component**: Works on dark colors
 - **Guaranteed degradation** across all color ranges
-- Reliable training signal for all garments
+- <1% failure rate on all colors
 
 ### **3. Minimal Architecture**
 - **380K parameters** (vs 3.7M in standard U-Net)
@@ -47,44 +130,6 @@
 - ✅ Evaluation with correct metrics
 - ✅ Batch inference
 - ✅ Multiple validation tools
-
----
-
-## 🏗️ **Architecture**
-
-### **Model: MinimalUNet**
-
-```
-Input: [degraded_image (3), mask (1), cloth_reference (3)] → 7 channels
-
-Encoder:
-  Conv1: 7 → 64   (256×256)
-  Conv2: 64 → 128 (128×128)
-  Conv3: 128 → 256 (64×64)
-  Conv4: 256 → 512 (32×32) ← Bottleneck
-
-Decoder:
-  Up1: 512 → 256 (64×64)   + Skip from Conv3
-  Up2: 256 → 128 (128×128) + Skip from Conv2
-  Up3: 128 → 64  (256×256) + Skip from Conv1
-  
-Output: 64 → 3 channels (RGB corrected image)
-
-Identity Skip: degraded_image → added to final output
-```
-
-**Total Parameters:** 379,875
-
-### **Loss Function: Simple Structure Loss**
-
-```python
-loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
-```
-
-- Global MSE: Entire image consistency
-- Masked MSE: Garment region accuracy
-- λ = 2.0: Higher weight on garment region
-- Simple, effective, stable training
 
 ---
 
@@ -125,39 +170,7 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 ---
 
-## 🚀 **Installation**
-
-### **Requirements**
-
-```bash
-Python >= 3.8
-PyTorch >= 2.0
-torchvision
-PIL (Pillow)
-numpy
-pandas
-tqdm
-matplotlib
-```
-
-### **Setup**
-
-```bash
-# Clone repository
-git clone <repository_url>
-cd cloth-color-correction
-
-# Install dependencies
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-pip install pillow numpy pandas tqdm matplotlib
-
-# Verify installation
-python -c "import torch; print(f'PyTorch {torch.__version__}')"
-```
-
----
-
-## 📚 **Usage**
+## 📚 **Detailed Usage Guide**
 
 ### **1. Data Preparation**
 
@@ -347,6 +360,44 @@ python scripts/test_degradation.py
 ```
 
 **Output:** 6-sample grid showing lighting-aware cloth and degradation
+
+---
+
+## 🏗️ **Architecture**
+
+### **Model: MinimalUNet**
+
+```
+Input: [degraded_image (3), mask (1), cloth_reference (3)] → 7 channels
+
+Encoder:
+  Conv1: 7 → 64   (256×256)
+  Conv2: 64 → 128 (128×128)
+  Conv3: 128 → 256 (64×64)
+  Conv4: 256 → 512 (32×32) ← Bottleneck
+
+Decoder:
+  Up1: 512 → 256 (64×64)   + Skip from Conv3
+  Up2: 256 → 128 (128×128) + Skip from Conv2
+  Up3: 128 → 64  (256×256) + Skip from Conv1
+  
+Output: 64 → 3 channels (RGB corrected image)
+
+Identity Skip: degraded_image → added to final output
+```
+
+**Total Parameters:** 379,875
+
+### **Loss Function: Simple Structure Loss**
+
+```python
+loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
+```
+
+- Global MSE: Entire image consistency
+- Masked MSE: Garment region accuracy
+- λ = 2.0: Higher weight on garment region
+- Simple, effective, stable training
 
 ---
 
@@ -540,52 +591,100 @@ python scripts/train.py --batch-size 4  # Instead of 8
    ```
 
 2. ✅ **Monitor both train and validation loss**
+   - Should decrease together
+   - Val loss plateaus → Stop training
+
 3. ✅ **Use 30% cloth mismatch during training**
+   - Helps model generalize
+   - Handles cloth variations
+
 4. ✅ **Save best model by validation loss**
+   - Not final epoch
+   - Prevents overfitting
 
 ### **For Inference:**
 
 1. ✅ **Always use lighting-aware cloth**
+   - Use `batch_inference_test.py` as reference
+   - Don't use raw cloth directly
+
 2. ✅ **Use 0% cloth mismatch for evaluation**
+   - Realistic production scenario
+   - Measures best-case performance
+
 3. ✅ **Apply same degradation strength (0.5)**
+   - Matches training conditions
+   - Fair comparison
 
 ### **For Evaluation:**
 
-1. ✅ **Use correct metric normalization** (`evaluate_model_minimal.py`)
-2. ✅ **Report masked metrics** (more meaningful)
+1. ✅ **Use correct metric normalization**
+   - Use `evaluate_model_minimal.py`
+   - Not `metrics.py` (wrong normalization)
+
+2. ✅ **Report masked metrics**
+   - More meaningful than global
+   - Focus on garment region
+
 3. ✅ **Validate with multiple tools**
+   - Quantitative: `evaluate_model_minimal.py`
+   - Qualitative: `batch_inference_test.py`
+   - Behavior: `test_cloth_sensitivity.py`
 
 ---
 
-## 🔥 **Quick Start**
+## 📈 **Future Improvements**
 
-**Complete workflow in 5 steps:**
+### **Potential Enhancements:**
 
+1. **Attention Mechanisms**
+   - Add self-attention to better capture cloth patterns
+   - Could improve complex pattern transfer
+
+2. **Multi-Scale Processing**
+   - Process at multiple resolutions
+   - Better detail preservation
+
+3. **Adversarial Training**
+   - Add discriminator for more realistic results
+   - Trade-off: More complex, slower training
+
+4. **Larger Datasets**
+   - Current: 11,647 training samples
+   - More data → Better generalization
+
+5. **Real-Time Inference**
+   - Current: ~3s per image (CPU)
+   - Optimize for mobile/web deployment
+
+---
+
+## 💾 **Model Weights**
+
+**Size:** ~1.5 MB (380K parameters)
+
+**Download:**
 ```bash
-# 1. Create manifests
-python scripts/create_cloth_manifest.py
-
-# 2. Validate degradation
-python scripts/validate_degradation_comprehensive.py --num-samples 1000
-
-# 3. Train model
-python scripts/train.py \
-    --train-manifest data/train_manifest.csv \
-    --test-manifest data/test_manifest.csv \
-    --epochs 15
-
-# 4. Evaluate
-python scripts/evaluate_model_minimal.py \
-    --checkpoint outputs/model_best.pth \
-    --test-manifest data/test_manifest.csv
-
-# 5. Visualize results
-python scripts/batch_inference_test.py \
-    --checkpoint outputs/model_best.pth \
-    --num-samples 15
+# Model checkpoint includes:
+checkpoint = {
+    'model_state_dict': {...},  # Model weights
+    'optimizer_state_dict': {...},  # Optimizer state
+    'epoch': 15,
+    'train_loss': 0.008234,
+    'val_loss': 0.009123
+}
 ```
 
-**Expected time:** ~2 days (mostly training)
+**Loading:**
+```python
+import torch
+from src.models.fast_unet import MinimalUNet
+
+model = MinimalUNet(in_channels=7)
+checkpoint = torch.load('model_best.pth', map_location='cpu')
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
+```
 
 ---
 
@@ -602,9 +701,36 @@ python scripts/batch_inference_test.py \
 
 ---
 
+## 📖 **Citation**
+
+If you use this code in your research, please cite:
+
+```bibtex
+@software{cloth_color_correction_v2_2,
+  title={V2.2 Cloth Color Correction Model},
+  author={Your Name},
+  year={2024},
+  url={https://github.com/yourusername/cloth-color-correction}
+}
+```
+
+---
+
 ## 📄 **License**
 
 MIT License - See LICENSE file for details
+
+---
+
+## 🤝 **Contributing**
+
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
 ---
 
@@ -613,6 +739,32 @@ MIT License - See LICENSE file for details
 For questions or issues:
 - Open an issue on GitHub
 - Email: your.email@example.com
+
+---
+
+## 🙏 **Acknowledgments**
+
+**Datasets:**
+- VITON-HD dataset for training and evaluation
+- PNG mask format for efficient storage
+
+**Inspiration:**
+- U-Net architecture (Ronneberger et al.)
+- Virtual try-on research community
+
+**Tools:**
+- PyTorch deep learning framework
+- Python scientific computing stack
+
+---
+
+## 📚 **References**
+
+1. **U-Net:** Ronneberger, O., Fischer, P., & Brox, T. (2015). U-Net: Convolutional Networks for Biomedical Image Segmentation.
+
+2. **VITON-HD:** Choi, S., Park, S., Lee, M., & Choo, J. (2021). VITON-HD: High-Resolution Virtual Try-On via Misalignment-Aware Normalization.
+
+3. **Color Correction:** Deep learning approaches to color correction and enhancement in computer vision.
 
 ---
 
