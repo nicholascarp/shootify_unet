@@ -29,7 +29,7 @@ matplotlib
 
 ```bash
 # Clone repository
-git clone <repository_url>
+git clone <https://github.com/nicholascarp/shootify_unet.git>
 cd cloth-color-correction
 
 # Install dependencies
@@ -86,19 +86,19 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Success Rate** | 80% | ✅ Excellent |
-| **Color MAE** | 0.034 | ✅ Industry-leading |
-| **PSNR** | 26.50 dB | ✅ High quality |
-| **Model Size** | 380K params | ✅ Lightweight |
-| **Inference Speed** | ~3s/image (CPU) | ✅ Fast |
+| **Success Rate** | 80% | Excellent |
+| **Color MAE** | 0.034 | Industry-leading |
+| **PSNR** | 26.50 dB | High quality |
+| **Model Size** | 380K params | Lightweight |
+| **Inference Speed** | ~3s/image (CPU) | Fast |
 
 **Comparison with previous versions:**
 
 | Model | Color MAE | PSNR (dB) | Improvement |
 |-------|-----------|-----------|-------------|
-| V2 Smooth | 0.084 | 17.14 | Baseline |
-| V2.1 Original | 0.068 | 18.81 | +19% |
-| **V2.2 Lighting** | **0.034** | **26.50** | **+50%** ✅ |
+| V2 | 0.084 | 17.14 | Baseline |
+| V2.1 | 0.068 | 18.81 | +19% |
+| **V2.2 Lighting** | **0.034** | **26.50** | **+50%** |
 
 ---
 
@@ -123,12 +123,12 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 - 7-channel input: RGB image + mask + RGB cloth
 - Identity skip connection for structure preservation
 
-### **4. Production-Ready Pipeline**
-- ✅ Data preparation (manifest creation)
-- ✅ Training with validation
-- ✅ Evaluation with correct metrics
-- ✅ Batch inference
-- ✅ Multiple validation tools
+### **4. Full Pipeline**
+- Data preparation (manifest creation)
+- Training with validation
+- Evaluation with correct metrics
+- Batch inference
+- Multiple validation tools
 
 ---
 
@@ -190,17 +190,6 @@ raw_data/
 python scripts/create_cloth_manifest.py
 ```
 
-**Output:**
-- `data/train_manifest.csv` (11,647 samples)
-- `data/test_manifest.csv` (2,032 samples)
-
-**Manifest Format:**
-```csv
-image,mask_path,cloth_image
-raw_data/train/images/00000_00.jpg,raw_data/train/image-parse-v3/00000_00.png,raw_data/train/cloth/00000_00.jpg
-```
-
-**Key Feature:** Uses PNG masks directly (saves ~12 GB vs NPY format!)
 
 ---
 
@@ -219,7 +208,7 @@ Average: 3.25s per batch
 Expected per epoch: 157.7 minutes (2.6 hours)
 Total training (15 epochs): 39.4 hours (1.6 days)
 
-✅ EXCELLENT! Fast enough to train!
+Ok Fast enough to train!
 ```
 
 #### **Train Model:**
@@ -280,8 +269,8 @@ Masked Metrics (Garment Only):
 
 Model                Color MAE    PSNR (dB)    Status
 ----------------------------------------------------------------------
-V2 Smooth            0.084        17.14        Baseline
-V2.1 Original        0.068        18.81        Better
+V2                   0.084        17.14        Baseline
+V2.1                 0.068        18.81        Better
 V2.2 Lighting        0.034        26.50        FINAL
 
 🎯 Improvement:
@@ -396,100 +385,17 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 - Global MSE: Entire image consistency
 - Masked MSE: Garment region accuracy
 - λ = 2.0: Higher weight on garment region
-- Simple, effective, stable training
+
 
 ---
 
-## 🎓 **Key Technical Details**
 
-### **1. Lighting-Aware Cloth Preprocessing**
-
-**Problem:** Raw cloth doesn't match on-model lighting
-
-**Solution:** Combine cloth color with on-model lighting pattern
-
-**Algorithm:**
-```python
-1. Extract mean color from cloth image → [R, G, B]
-2. Extract luminance from on-model garment → Grayscale
-3. Normalize luminance in masked region → [0.3, 1.3]
-4. Multiply: cloth_color × normalized_luminance
-5. Result: Cloth with same lighting as on-model image
-```
-
-**Example:**
-```
-Raw cloth: Uniform red [1.0, 0.0, 0.0]
-On-model has shadows and highlights
-Output: Red with lighting pattern [0.3-1.0, 0.0, 0.0]
-```
-
-**Why It Works:**
-- Preserves garment structure (lighting = shadows, folds)
-- Transfers cloth color (red → reddish output)
-- Model learns color correction, not structure reconstruction
-
----
-
-### **2. Two-Component Degradation**
-
-**Problem:** Single degradation method fails on some colors
-
-**Solution:** Combine multiplicative and additive degradation
-
-**Formula:**
-```python
-degraded = original × (1 - α × strength) + β × strength × color_shift
-
-α = 0.7  # Multiplicative weight (brightness scaling)
-β = 0.3  # Additive weight (color shift)
-```
-
-**Why It Works:**
-```
-Bright colors (white, yellow):
-  → Multiplicative works well (scale down brightness)
-  
-Dark colors (black, dark blue):
-  → Additive works well (add color shift)
-  
-Combined:
-  → Works on ALL colors!
-```
-
-**Result:** <1% failure rate across all color ranges
-
----
-
-### **3. Metric Normalization (CRITICAL)**
-
-**⚠️ Common Mistake:**
-```python
-# WRONG (diluted by total pixels):
-color_mae = mean(|output * mask - gt * mask|)
-# Divides by: total_pixels (65,536)
-```
-
-**✅ Correct Approach:**
-```python
-# CORRECT (normalized by masked pixels):
-output_masked = output[mask > 0.5]  # Extract only masked pixels
-gt_masked = gt[mask > 0.5]
-color_mae = mean(|output_masked - gt_masked|)
-# Divides by: masked_pixels (~26,000)
-```
-
-**Impact:** Wrong normalization gives values ~2.5× lower than reality!
-
-**This Project:** Uses correct normalization in `evaluate_model_minimal.py` ✅
-
----
 
 ## 📊 **Results**
 
 ### **Quantitative Results**
 
-| Metric | V2 Smooth | V2.1 Original | V2.2 Lighting | Improvement |
+| Metric | V2        | V2.1          | V2.2 Lighting | Improvement |
 |--------|-----------|---------------|---------------|-------------|
 | **Color MAE** | 0.084 | 0.068 | **0.034** | **+50%** |
 | **PSNR (dB)** | 17.14 | 18.81 | **26.50** | **+41%** |
@@ -526,12 +432,12 @@ color_mae = mean(|output_masked - gt_masked|)
 | **Lighting-aware cloth** | **0.034** | **26.50 dB** | **V2.2 (50% better!)** |
 | No identity skip | 0.052 | 22.34 dB | Structure loss |
 | Single degradation | 0.041 | 24.12 dB | Some colors fail |
-| **Full V2.2 pipeline** | **0.034** | **26.50 dB** | **Best** |
+
 
 **Key Findings:**
-1. **Lighting-aware cloth:** +50% improvement (critical!)
+1. **Lighting aware cloth:** +50% improvement (critical!)
 2. **Identity skip:** +35% improvement (preserves structure)
-3. **Two-component degradation:** +18% improvement (reliability)
+3. **Two component degradation:** +18% improvement (reliability)
 
 ---
 
@@ -539,44 +445,22 @@ color_mae = mean(|output_masked - gt_masked|)
 
 ### **Common Issues:**
 
-#### **1. ImportError: Cannot import class**
 
-**Problem:** Dataset class name mismatch
-
-**Solution:** Check actual class name in `src/data/dataset.py`:
-- If `class VITONDataset`: Update imports to use `VITONDataset`
-- If `class UpperMaskDegradedDataset`: Imports are already correct
-
-#### **2. Poor Results During Inference**
-
-**Problem:** Not using lighting-aware cloth preprocessing
-
-**Solution:** Use `batch_inference_test.py` which implements correct preprocessing
-
-**Don't:** Use raw cloth directly ❌  
-**Do:** Create lighting-aware cloth first ✅
-
-#### **3. Low Color MAE Values (Suspiciously Low)**
-
-**Problem:** Wrong metric normalization
-
-**Solution:** Use `evaluate_model_minimal.py`, not `metrics.py`
-
-#### **4. Out of Memory**
+#### **1. Out of Memory**
 
 **Solution:** Reduce batch size:
 ```bash
 python scripts/train.py --batch-size 4  # Instead of 8
 ```
 
-#### **5. Slow Training on CPU**
+#### **2. Slow Training on CPU**
 
 **Expected:** ~40 hours for 15 epochs on CPU
 
 **Options:**
 - Use GPU (10× faster): ~4 hours
 - Reduce epochs: `--epochs 10`
-- Accept the wait: 1.6 days is reasonable
+
 
 ---
 
@@ -585,9 +469,6 @@ python scripts/train.py --batch-size 4  # Instead of 8
 ### **For Training:**
 
 1. ✅ **Always validate degradation first:**
-   ```bash
-   python scripts/validate_degradation_comprehensive.py --num-samples 1000
-   ```
 
 2. ✅ **Monitor both train and validation loss**
    - Should decrease together
@@ -603,29 +484,19 @@ python scripts/train.py --batch-size 4  # Instead of 8
 
 ### **For Inference:**
 
-1. ✅ **Always use lighting-aware cloth**
-   - Use `batch_inference_test.py` as reference
-   - Don't use raw cloth directly
 
-2. ✅ **Use 0% cloth mismatch for evaluation**
+1. ✅ **Use 0% cloth mismatch for evaluation**
    - Realistic production scenario
    - Measures best-case performance
 
-3. ✅ **Apply same degradation strength (0.5)**
+2. ✅ **Apply same degradation strength (0.5)**
    - Matches training conditions
    - Fair comparison
 
 ### **For Evaluation:**
 
-1. ✅ **Use correct metric normalization**
-   - Use `evaluate_model_minimal.py`
-   - Not `metrics.py` (wrong normalization)
 
-2. ✅ **Report masked metrics**
-   - More meaningful than global
-   - Focus on garment region
-
-3. ✅ **Validate with multiple tools**
+**Validate with multiple tools**
    - Quantitative: `evaluate_model_minimal.py`
    - Qualitative: `batch_inference_test.py`
    - Behavior: `test_cloth_sensitivity.py`
@@ -658,34 +529,7 @@ python scripts/train.py --batch-size 4  # Instead of 8
 
 ---
 
-## 💾 **Model Weights**
 
-**Size:** ~1.5 MB (380K parameters)
-
-**Download:**
-```bash
-# Model checkpoint includes:
-checkpoint = {
-    'model_state_dict': {...},  # Model weights
-    'optimizer_state_dict': {...},  # Optimizer state
-    'epoch': 15,
-    'train_loss': 0.008234,
-    'val_loss': 0.009123
-}
-```
-
-**Loading:**
-```python
-import torch
-from src.models.fast_unet import MinimalUNet
-
-model = MinimalUNet(in_channels=7)
-checkpoint = torch.load('model_best.pth', map_location='cpu')
-model.load_state_dict(checkpoint['model_state_dict'])
-model.eval()
-```
-
----
 
 ## ✨ **Highlights**
 
@@ -696,7 +540,6 @@ model.eval()
 - 🎨 **Lighting-aware** cloth preprocessing
 - 🔧 **Production-ready** pipeline
 - 📊 **Comprehensive** validation tools
-- 💾 **Efficient** PNG mask storage (saves 12GB)
 
 ---
 
@@ -707,8 +550,8 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{cloth_color_correction_v2_2,
   title={V2.2 Cloth Color Correction Model},
-  author={Your Name},
-  year={2024},
+  author={Nicholas Carp},
+  year={2025},
   url={https://github.com/yourusername/cloth-color-correction}
 }
 ```
@@ -737,7 +580,7 @@ Contributions welcome! Please:
 
 For questions or issues:
 - Open an issue on GitHub
-- Email: your.email@example.com
+- Email: nicholas.carp@outlook.it
 
 ---
 
@@ -745,7 +588,6 @@ For questions or issues:
 
 **Datasets:**
 - VITON-HD dataset for training and evaluation
-- PNG mask format for efficient storage
 
 **Inspiration:**
 - U-Net architecture (Ronneberger et al.)
@@ -769,4 +611,4 @@ For questions or issues:
 
 **Built with ❤️ for virtual try-on applications**
 
-Last updated: December 2024
+Last updated: December 2025
