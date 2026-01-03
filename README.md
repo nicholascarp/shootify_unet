@@ -1,6 +1,5 @@
 # V2.2 Cloth Color Correction Model
 
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
@@ -414,29 +413,6 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 ---
 
-## 🐛 **Troubleshooting**
-
-### **Common Issues:**
-
-
-#### **1. Out of Memory**
-
-**Solution:** Reduce batch size:
-```bash
-python scripts/train.py --batch-size 4  # Instead of 8
-```
-
-#### **2. Slow Training on CPU**
-
-**Expected:** ~40 hours for 15 epochs on CPU
-
-**Options:**
-- Use GPU (10× faster): ~4 hours
-- Reduce epochs: `--epochs 10`
-
-
----
-
 ## 📈 **Future Improvements**
 
 ### **Potential Enhancements:**
@@ -449,29 +425,30 @@ python scripts/train.py --batch-size 4  # Instead of 8
    - Process at multiple resolutions
    - Better detail preservation
 
-3. **Adversarial Training**
-   - Add discriminator for more realistic results
-   - Trade-off: More complex, slower training
+3. **Data Augmentation Strategies**
+   - Random Degradation Strength
+   - Color Shift Direction Sampling
+   - Lighting Variations
+   - Geometric Augmentation
 
 4. **Larger Datasets**
    - Current: 11,647 training samples
    - More data → Better generalization
 
-5. **Real-Time Inference**
-   - Current: ~3s per image (CPU)
-   - Optimize for mobile/web deployment
+5. **Loss Function Enhancements**
+   - Perceptual Loss
 
 ---
 
 
 
-## 📄 **License**
+## **License**
 
 MIT License - See LICENSE file for details
 
 ---
 
-## 🤝 **Contributing**
+## **Contributing**
 
 Contributions welcome! Please:
 
@@ -483,7 +460,7 @@ Contributions welcome! Please:
 
 ---
 
-## 📧 **Contact**
+## **Contact**
 
 For questions or issues:
 - Open an issue on GitHub
@@ -491,7 +468,7 @@ For questions or issues:
 
 ---
 
-## 🙏 **Acknowledgments**
+## **Acknowledgments**
 
 **Datasets:**
 - VITON-HD dataset for training and evaluation
@@ -506,7 +483,7 @@ For questions or issues:
 
 ---
 
-## 📚 **References**
+## **References**
 
 1. **U-Net:** Ronneberger, O., Fischer, P., & Brox, T. (2015). U-Net: Convolutional Networks for Biomedical Image Segmentation.
 
