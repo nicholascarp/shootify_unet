@@ -68,7 +68,7 @@ python scripts/batch_inference_test.py \
     --num-samples 15
 ```
 
-**Expected time:** ~2 days (mostly training: ~40 hours on CPU)
+**Expected time:** ~2 days (mostly training: approximately 40 hours on CPU)
 
 **Expected output:**
 ```
@@ -83,13 +83,13 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ## **Performance Summary**
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| **Success Rate** | 80% | Excellent |
-| **Color MAE** | 0.034 | Industry-leading |
-| **PSNR** | 26.50 dB | High quality |
-| **Model Size** | 380K params | Lightweight |
-| **Inference Speed** | ~3s/image (CPU) | Fast |
+| Metric | Value 
+|--------|-------|
+| **Success Rate** | 80% |
+| **Color MAE** | 0.034 | 
+| **PSNR** | 26.50 dB | 
+| **Model Size** | 380K params | 
+| **Inference Speed** | ~3s/image (CPU) |
 
 **Comparison with previous versions:**
 
@@ -97,28 +97,24 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 |-------|-----------|-----------|-------------|
 | V2 | 0.084 | 17.14 | Baseline |
 | V2.1 | 0.068 | 18.81 | +19% |
-| **V2.2 Lighting** | **0.034** | **26.50** | **+50%** |
+| **V2.2** | **0.034** | **26.50** | **+50%** |
 
 ---
 
 
-## 🎯 **Key Features**
+## **Key Features**
 
-### **1. Lighting-Aware Cloth Preprocessing** 
-- Extracts mean color from cloth reference
-- Preserves lighting pattern from on-model garment
+### **1. Lighting Aware Cloth Preprocessing** 
+- Preserves lighting pattern from on model garment
 - Combines color + lighting for realistic cloth reference
-- **50% better** than V2.1 (original cloth)
 
-### **2. Two-Component Degradation**
+### **2. Two Component Degradation**
 - **Multiplicative component**: Works on bright colors
 - **Additive component**: Works on dark colors
-- **Guaranteed degradation** across all color ranges
 - <1% failure rate on all colors
 
 ### **3. Minimal Architecture**
 - **380K parameters** (vs 3.7M in standard U-Net)
-- **98% smaller** while maintaining quality
 - 7-channel input: RGB image + mask + RGB cloth
 - Identity skip connection for structure preservation
 
@@ -250,7 +246,7 @@ python scripts/evaluate_model_minimal.py \
 **Output:**
 ```
 ======================================================================
-FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL
+FINAL EVALUATION RESULTS - V2.2 LIGHTING AWARE MODEL
 ======================================================================
 
 
@@ -446,40 +442,14 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 MIT License - See LICENSE file for details
 
----
-
-## **Contributing**
-
-Contributions welcome! Please:
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
 
 ---
 
 ## **Contact**
 
 For questions or issues:
-- Open an issue on GitHub
 - Email: nicholas.carp@outlook.it
 
----
-
-## **Acknowledgments**
-
-**Datasets:**
-- VITON-HD dataset for training and evaluation
-
-**Inspiration:**
-- U-Net architecture (Ronneberger et al.)
-- Virtual try-on research community
-
-**Tools:**
-- PyTorch deep learning framework
-- Python scientific computing stack
 
 ---
 
