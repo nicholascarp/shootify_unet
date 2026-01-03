@@ -254,11 +254,8 @@ python scripts/evaluate_model_minimal.py \
 📊 FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL
 ======================================================================
 
-Global Metrics (Whole Image):
-  MSE:  0.001234
-  PSNR: 29.08 dB
 
-Masked Metrics (Garment Only):
+Masked Metrics:
   MSE:  0.000567
   PSNR: 26.50 dB
   Color MAE: 0.034000  ← Main metric!
@@ -274,8 +271,8 @@ V2.1                 0.068        18.81        Better
 V2.2 Lighting        0.034        26.50        FINAL
 
 🎯 Improvement:
-   vs V2.1 (Original): +50.0%
-   vs V2 (Smooth):     +59.5%
+   vs V2.1: +50.0%
+   vs V2:     +59.5%
 ```
 
 **Files Created:**
@@ -408,14 +405,14 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 **Typical Results:**
 - **Degradation applied:** ~15% color shift (MAE 0.15)
 - **After correction:** ~3% remaining error (MAE 0.03)
-- **Improvement:** ~80% reduction in error
 
-**Best Cases (>90% improvement):**
+
+**Best Cases:**
 - Solid color garments
 - High mask coverage (>40%)
 - Good lighting conditions
 
-**Challenging Cases (50-70% improvement):**
+**Challenging Cases:**
 - Complex patterns
 - Low mask coverage (<20%)
 - Extreme lighting (very dark/bright)
@@ -471,8 +468,7 @@ python scripts/train.py --batch-size 4  # Instead of 8
 1. ✅ **Always validate degradation first:**
 
 2. ✅ **Monitor both train and validation loss**
-   - Should decrease together
-   - Val loss plateaus → Stop training
+
 
 3. ✅ **Use 30% cloth mismatch during training**
    - Helps model generalize
