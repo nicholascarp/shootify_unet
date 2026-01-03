@@ -4,12 +4,12 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-**Deep learning model for correcting color degradation in virtual try-on images using lighting-aware cloth references.**
+**Deep learning model for correcting color degradation in virtual try on images using cloth references.**
 
 **Performance:** 80% success rate | Color MAE 0.034 | PSNR 26.50 dB | 380K parameters | ~3s inference (CPU)
 
 ---
-## 🚀 **Installation**
+## **Installation**
 
 ### **Requirements**
 
@@ -40,7 +40,7 @@ python -c "import torch; print(f'PyTorch {torch.__version__}')"
 ```
 
 ---
-## 🔥 **Quick Start**
+## **Quick Start**
 
 **Complete workflow in 5 steps:**
 
@@ -81,7 +81,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ---
 
-## 📊 **Performance Summary**
+## **Performance Summary**
 
 | Metric | Value | Status |
 |--------|-------|--------|
@@ -104,7 +104,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ## 🎯 **Key Features**
 
-### **1. Lighting-Aware Cloth Preprocessing** ⭐
+### **1. Lighting-Aware Cloth Preprocessing** 
 - Extracts mean color from cloth reference
 - Preserves lighting pattern from on-model garment
 - Combines color + lighting for realistic cloth reference
@@ -168,7 +168,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ---
 
-## 📚 **Detailed Usage Guide**
+## **Detailed Usage Guide**
 
 ### **1. Data Preparation**
 
@@ -250,7 +250,7 @@ python scripts/evaluate_model_minimal.py \
 **Output:**
 ```
 ======================================================================
-📊 FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL
+FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL
 ======================================================================
 
 
@@ -260,7 +260,7 @@ Masked Metrics:
   Color MAE: 0.034000
 
 ======================================================================
-📈 COMPARISON WITH PREVIOUS MODELS
+COMPARISON WITH PREVIOUS MODELS
 ======================================================================
 
 Model                Color MAE    PSNR (dB)    Status
@@ -269,7 +269,7 @@ V2                   0.084        17.14        Baseline
 V2.1                 0.068        18.81        Better
 V2.2 Lighting        0.034        26.50        FINAL
 
-🎯 Improvement:
+  Improvement:
    vs V2.1: +50.0%
    vs V2:     +59.5%
 ```
@@ -312,7 +312,7 @@ python scripts/test_cloth_sensitivity.py
 
 **Expected Result:**
 ```
-✅ MODEL USES CLOTH REFERENCE!
+MODEL USES CLOTH REFERENCE!
    Outputs change significantly with cloth color!
    Color transfer learned successfully!
 ```
@@ -332,8 +332,8 @@ python scripts/validate_degradation_comprehensive.py --num-samples 1000
 
 **Expected Result:**
 ```
-✅ EXCELLENT! Degradation works reliably (<1% failures)
-   ✅ Safe to proceed with training!
+EXCELLENT! Degradation works reliably (<1% failures)
+   Safe to proceed with training!
 ```
 
 #### **Visual Degradation Test:**
@@ -387,7 +387,7 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 
 
-## 📊 **Results**
+## **Results**
 
 ### **Quantitative Results**
 
@@ -413,7 +413,7 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 ---
 
-## 📈 **Future Improvements**
+## **Future Improvements**
 
 ### **Potential Enhancements:**
 
