@@ -74,7 +74,7 @@ python scripts/batch_inference_test.py \
 **Expected output:**
 ```
 Step 1: data/train_manifest.csv (11,647 samples), data/test_manifest.csv (2,032 samples)
-Step 2: ✅ EXCELLENT! Degradation works reliably (<1% failures)
+Step 2: EXCELLENT! Degradation works reliably (<1% failures)
 Step 3: outputs/model_best.pth (380K params, ~1.5 MB)
 Step 4: Color MAE: 0.034, PSNR: 26.50 dB, Success: 80%
 Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
@@ -258,7 +258,7 @@ python scripts/evaluate_model_minimal.py \
 Masked Metrics:
   MSE:  0.000567
   PSNR: 26.50 dB
-  Color MAE: 0.034000  ← Main metric!
+  Color MAE: 0.034000
 
 ======================================================================
 📈 COMPARISON WITH PREVIOUS MODELS
@@ -348,7 +348,7 @@ python scripts/test_degradation.py
 
 ---
 
-## 🏗️ **Architecture**
+## **Architecture**
 
 ### **Model: MinimalUNet**
 
@@ -402,39 +402,15 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 
 ### **Qualitative Results**
 
-**Typical Results:**
-- **Degradation applied:** ~15% color shift (MAE 0.15)
-- **After correction:** ~3% remaining error (MAE 0.03)
-
 
 **Best Cases:**
 - Solid color garments
-- High mask coverage (>40%)
 - Good lighting conditions
 
 **Challenging Cases:**
 - Complex patterns
-- Low mask coverage (<20%)
 - Extreme lighting (very dark/bright)
 
----
-
-## 🔬 **Ablation Studies**
-
-### **Component Impact:**
-
-| Configuration | Color MAE | PSNR | Notes |
-|---------------|-----------|------|-------|
-| Raw cloth (no lighting) | 0.068 | 18.81 dB | V2.1 baseline |
-| **Lighting-aware cloth** | **0.034** | **26.50 dB** | **V2.2 (50% better!)** |
-| No identity skip | 0.052 | 22.34 dB | Structure loss |
-| Single degradation | 0.041 | 24.12 dB | Some colors fail |
-
-
-**Key Findings:**
-1. **Lighting aware cloth:** +50% improvement (critical!)
-2. **Identity skip:** +35% improvement (preserves structure)
-3. **Two component degradation:** +18% improvement (reliability)
 
 ---
 
@@ -458,44 +434,6 @@ python scripts/train.py --batch-size 4  # Instead of 8
 - Use GPU (10× faster): ~4 hours
 - Reduce epochs: `--epochs 10`
 
-
----
-
-## 🎯 **Best Practices**
-
-### **For Training:**
-
-1. ✅ **Always validate degradation first:**
-
-2. ✅ **Monitor both train and validation loss**
-
-
-3. ✅ **Use 30% cloth mismatch during training**
-   - Helps model generalize
-   - Handles cloth variations
-
-4. ✅ **Save best model by validation loss**
-   - Not final epoch
-   - Prevents overfitting
-
-### **For Inference:**
-
-
-1. ✅ **Use 0% cloth mismatch for evaluation**
-   - Realistic production scenario
-   - Measures best-case performance
-
-2. ✅ **Apply same degradation strength (0.5)**
-   - Matches training conditions
-   - Fair comparison
-
-### **For Evaluation:**
-
-
-**Validate with multiple tools**
-   - Quantitative: `evaluate_model_minimal.py`
-   - Qualitative: `batch_inference_test.py`
-   - Behavior: `test_cloth_sensitivity.py`
 
 ---
 
@@ -526,33 +464,6 @@ python scripts/train.py --batch-size 4  # Instead of 8
 ---
 
 
-
-## ✨ **Highlights**
-
-- 🎯 **80% success rate** on VITON-HD dataset
-- 📉 **0.034 Color MAE** (industry-leading)
-- 🚀 **380K parameters** (98% smaller than standard U-Net)
-- ⚡ **~3s inference** on CPU
-- 🎨 **Lighting-aware** cloth preprocessing
-- 🔧 **Production-ready** pipeline
-- 📊 **Comprehensive** validation tools
-
----
-
-## 📖 **Citation**
-
-If you use this code in your research, please cite:
-
-```bibtex
-@software{cloth_color_correction_v2_2,
-  title={V2.2 Cloth Color Correction Model},
-  author={Nicholas Carp},
-  year={2025},
-  url={https://github.com/yourusername/cloth-color-correction}
-}
-```
-
----
 
 ## 📄 **License**
 
@@ -605,6 +516,5 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ for virtual try-on applications**
 
-Last updated: December 2025
+Last updated: January 2026
