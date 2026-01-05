@@ -106,7 +106,7 @@ def test_batch_inference(model, device, test_dir, num_samples=10):
     
     image_files = sorted([f for f in os.listdir(image_dir) if f.endswith('.jpg')])[:num_samples]
     
-    print(f"\n📊 Testing {len(image_files)} samples...")
+    print(f"\n Testing {len(image_files)} samples...")
     
     fig, axes = plt.subplots(len(image_files), 7, figsize=(28, 4*len(image_files)))
     
@@ -207,7 +207,7 @@ def test_batch_inference(model, device, test_dir, num_samples=10):
     
     output_path = 'outputs/batch_inference_FIXED.png'
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
-    print(f"\n✅ Saved: {output_path}")
+    print(f"\n Saved: {output_path}")
     plt.show()
 
 

@@ -26,7 +26,7 @@ def test_lighting_aware():
         cloth_mismatch_prob=0.0,  # No mismatch for testing
     )
     
-    print(f"\n📊 Sampling 6 items...")
+    print(f"\n Sampling 6 items...")
     
     fig, axes = plt.subplots(6, 5, figsize=(20, 24))
     
@@ -72,10 +72,10 @@ def test_lighting_aware():
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig('outputs/test_lighting_aware_cloth.png', dpi=150)
-    print(f"✅ Saved: outputs/test_lighting_aware_cloth.png")
+    print(f" Saved: outputs/test_lighting_aware_cloth.png")
     plt.show()
     
-    print("\n✅ TEST COMPLETE")
+    print("\n TEST COMPLETE")
     print("\nCheck that:")
     print("  1. Lighting-aware cloth has color fields (not uniform)")
     print("  2. Dark regions in original → dark in cloth")

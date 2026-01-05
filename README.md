@@ -29,10 +29,10 @@ matplotlib
 ```bash
 # Clone repository
 git clone <https://github.com/nicholascarp/shootify_unet.git>
-cd cloth-color-correction
+cd shootify_unet
 
 # Install dependencies
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install torch torchvision
 pip install pillow numpy pandas tqdm matplotlib
 
 # Verify installation
@@ -68,7 +68,7 @@ python scripts/batch_inference_test.py \
     --num-samples 15
 ```
 
-**Expected time:** ~2 days (mostly training: approximately 40 hours on CPU)
+**Expected time:** approximately 2 days (mostly training: 40 hours on CPU)
 
 **Expected output:**
 ```
@@ -119,7 +119,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 - Identity skip connection for structure preservation
 
 ### **4. Full Pipeline**
-- Data preparation (manifest creation)
+- Manifest Creation
 - Training with validation
 - Evaluation with correct metrics
 - Batch inference
@@ -172,7 +172,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 ```
 raw_data/
 ├── train/
-│   ├── images/              # On-model JPG images
+│   ├── images/              # On model JPG images
 │   ├── cloth/               # Cloth JPG images  
 │   └── image-parse-v3/      # Segmentation PNG masks (class 5 = upper garment)
 └── test/
@@ -255,19 +255,6 @@ Masked Metrics:
   PSNR: 26.50 dB
   Color MAE: 0.034000
 
-======================================================================
-COMPARISON WITH PREVIOUS MODELS
-======================================================================
-
-Model                Color MAE    PSNR (dB)    Status
-----------------------------------------------------------------------
-V2                   0.084        17.14        Baseline
-V2.1                 0.068        18.81        Better
-V2.2 Lighting        0.034        26.50        FINAL
-
-  Improvement:
-   vs V2.1: +50.0%
-   vs V2:     +59.5%
 ```
 
 **Files Created:**
@@ -378,33 +365,6 @@ loss = MSE(output, gt) + λ * MSE(output * mask, gt * mask)
 - Masked MSE: Garment region accuracy
 - λ = 2.0: Higher weight on garment region
 
-
----
-
-
-
-## **Results**
-
-### **Quantitative Results**
-
-| Metric | V2        | V2.1          | V2.2 Lighting | Improvement |
-|--------|-----------|---------------|---------------|-------------|
-| **Color MAE** | 0.084 | 0.068 | **0.034** | **+50%** |
-| **PSNR (dB)** | 17.14 | 18.81 | **26.50** | **+41%** |
-| **Success Rate** | 55% | 65% | **80%** | **+23%** |
-
-**Success Criteria:** Final error < 0.05 (5% color shift)
-
-### **Qualitative Results**
-
-
-**Best Cases:**
-- Solid color garments
-- Good lighting conditions
-
-**Challenging Cases:**
-- Complex patterns
-- Extreme lighting (very dark/bright)
 
 
 ---

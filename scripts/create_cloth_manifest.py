@@ -28,7 +28,7 @@ def create_manifest_for_split(
     cloth_dir = Path(cloth_dir)
     mask_dir = Path(mask_dir)
     
-    print(f"\n📂 Directories:")
+    print(f"\n Directories:")
     print(f"  On-model: {on_model_dir}")
     print(f"  Cloth: {cloth_dir}")
     print(f"  Masks: {mask_dir}")
@@ -36,7 +36,7 @@ def create_manifest_for_split(
     # Get all on-model images
     on_model_files = sorted(list(on_model_dir.glob('*.jpg')))
     
-    print(f"\n🔍 Found {len(on_model_files)} on-model images")
+    print(f"\n Found {len(on_model_files)} on-model images")
     print(f"   Processing...")
     
     pairs = []
@@ -67,17 +67,17 @@ def create_manifest_for_split(
                 missing_mask += 1
     
     # Report
-    print(f"\n📊 Results:")
-    print(f"  ✅ Complete pairs: {len(pairs)}")
+    print(f"\n Results:")
+    print(f"   Complete pairs: {len(pairs)}")
     
     if missing_cloth > 0:
-        print(f"  ⚠️  Missing cloth images: {missing_cloth}")
+        print(f"    Missing cloth images: {missing_cloth}")
     
     if missing_mask > 0:
-        print(f"  ⚠️  Missing masks: {missing_mask}")
+        print(f"    Missing masks: {missing_mask}")
     
     if len(pairs) == 0:
-        print(f"\n❌ ERROR: No valid pairs found for {split_name}!")
+        print(f"\n ERROR: No valid pairs found for {split_name}!")
         return None
     
     # Create DataFrame
@@ -86,11 +86,11 @@ def create_manifest_for_split(
     # Save manifest
     df.to_csv(output_csv, index=False)
     
-    print(f"\n💾 Saved manifest:")
+    print(f"\n Saved manifest:")
     print(f"   {output_csv}")
     
     # Show sample
-    print(f"\n📋 Sample entries:")
+    print(f"\n Sample entries:")
     sample_df = df.head(3)
     for idx, row in sample_df.iterrows():
         print(f"\n  Entry {idx + 1}:")
@@ -132,31 +132,21 @@ def main():
     
     # Final Summary
     print(f"\n{'='*70}")
-    print("✅ MANIFEST CREATION COMPLETE")
+    print("MANIFEST CREATION COMPLETE")
     print(f"{'='*70}")
     
     if train_df is not None:
-        print(f"\n📊 TRAIN: {len(train_df):,} pairs")
+        print(f"\n TRAIN: {len(train_df):,} pairs")
         print(f"   → data/train_manifest.csv")
     
     if test_df is not None:
-        print(f"\n📊 TEST: {len(test_df):,} pairs")
+        print(f"\n TEST: {len(test_df):,} pairs")
         print(f"   → data/test_manifest.csv")
     
     if train_df is not None and test_df is not None:
         print(f"\n{'='*70}")
-        print("🚀 READY TO TRAIN!")
+        print(" READY TO TRAIN!")
         print(f"{'='*70}")
-        print("\n💾 Disk space saved: ~12 GB (no NPY files needed!)")
-        print("\nRun:")
-        print("  python scripts/train.py \\")
-        print("      --train-manifest data/train_manifest.csv \\")
-        print("      --test-manifest data/test_manifest.csv \\")
-        print("      --epochs 10 \\")
-        print("      --batch-size 4 \\")
-        print("      --output-dir outputs/cloth_reference_model")
-        print(f"{'='*70}")
-
 
 if __name__ == '__main__':
     main()

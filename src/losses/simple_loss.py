@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #!/usr/bin/env python3
-"""
-Simplified loss for faster training
-Relies on architecture's identity skip for structure preservation
-"""
+
 import torch
 import torch.nn.functional as F
 

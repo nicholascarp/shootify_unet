@@ -35,7 +35,7 @@ def validate_degradation_comprehensive(num_samples=1000):
     )
     
     num_samples = min(num_samples, len(dataset))
-    print(f"\n📊 Testing {num_samples} samples from {len(dataset)} total...")
+    print(f"\n Testing {num_samples} samples from {len(dataset)} total...")
     
     # Statistics
     stats = {
@@ -48,7 +48,7 @@ def validate_degradation_comprehensive(num_samples=1000):
     degradation_values = []
     
     # Test samples
-    print("\n🔍 Testing degradation effectiveness...")
+    print("\n Testing degradation effectiveness...")
     for i in tqdm(range(num_samples)):
         try:
             sample = dataset[i]
@@ -91,18 +91,18 @@ def validate_degradation_comprehensive(num_samples=1000):
                 })
         
         except Exception as e:
-            print(f"\n❌ Error on sample {i}: {e}")
+            print(f"\n Error on sample {i}: {e}")
             continue
     
     # Print results
     print("\n" + "="*70)
-    print("📊 VALIDATION RESULTS")
+    print(" VALIDATION RESULTS")
     print("="*70)
     
     print(f"\nTotal samples tested: {num_samples}")
     print(f"Valid samples: {len(degradation_values)}")
     
-    print("\n📈 Degradation Statistics by Color Range:")
+    print("\n Degradation Statistics by Color Range:")
     print("-"*70)
     
     for category in ['dark', 'medium', 'bright']:
@@ -121,10 +121,10 @@ def validate_degradation_comprehensive(num_samples=1000):
             print(f"  Failed (<0.05):   {failed_count} ({failed_count/len(values)*100:.1f}%)")
             
             if mean_deg < 0.1:
-                print(f"  ⚠️  WARNING: Low degradation for {category} colors!")
+                print(f"    WARNING: Low degradation for {category} colors!")
     
     # Overall statistics
-    print("\n📊 Overall Statistics:")
+    print("\n Overall Statistics:")
     print("-"*70)
     mean_overall = np.mean(degradation_values)
     std_overall = np.std(degradation_values)
@@ -136,10 +136,10 @@ def validate_degradation_comprehensive(num_samples=1000):
     print(f"Range:                   [{min_overall:.4f}, {max_overall:.4f}]")
     
     # Failure analysis
-    print("\n❌ Failed Samples (degradation < 0.05):")
+    print("\n Failed Samples (degradation < 0.05):")
     print("-"*70)
     if len(failed_samples) == 0:
-        print("✅ NO FAILURES! All samples degraded successfully!")
+        print(" NO FAILURES! All samples degraded successfully!")
     else:
         print(f"Total failures: {len(failed_samples)} ({len(failed_samples)/len(degradation_values)*100:.1f}%)")
         print("\nTop 10 worst cases:")
@@ -151,7 +151,7 @@ def validate_degradation_comprehensive(num_samples=1000):
                   f"degradation={sample['degradation_mae']:.4f}")
     
     # Visualize distribution
-    print("\n📊 Creating distribution plot...")
+    print("\n Creating distribution plot...")
     
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
@@ -250,36 +250,36 @@ def validate_degradation_comprehensive(num_samples=1000):
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig('outputs/degradation_validation_comprehensive.png', dpi=150, bbox_inches='tight')
-    print(f"✅ Saved: outputs/degradation_validation_comprehensive.png")
+    print(f" Saved: outputs/degradation_validation_comprehensive.png")
     plt.show()
     
     # Final verdict
     print("\n" + "="*70)
-    print("🎯 FINAL VERDICT")
+    print(" FINAL VERDICT")
     print("="*70)
     
     failure_rate = len(failed_samples) / len(degradation_values) * 100
     
     if failure_rate < 1.0:
-        print("✅ EXCELLENT! Degradation works reliably (<1% failures)")
-        print("   ✅ Safe to proceed with training!")
+        print(" EXCELLENT! Degradation works reliably (<1% failures)")
+        print("    Safe to proceed with training!")
     elif failure_rate < 5.0:
-        print("⚠️  ACCEPTABLE! Some degradation failures (1-5%)")
-        print("   ✅ Should be OK for training, but monitor results")
+        print("  ACCEPTABLE! Some degradation failures (1-5%)")
+        print("    Should be OK for training, but monitor results")
     else:
-        print("❌ WARNING! High degradation failure rate (>5%)")
-        print("   ⚠️  Review failed samples before training!")
+        print(" WARNING! High degradation failure rate (>5%)")
+        print("     Review failed samples before training!")
     
-    print("\n💡 Recommendations:")
+    print("\n Recommendations:")
     if mean_overall > 0.15:
-        print("   ✅ Mean degradation is good (>0.15)")
+        print("    Mean degradation is good (>0.15)")
     else:
-        print("   ⚠️  Consider increasing degradation strength")
+        print("     Consider increasing degradation strength")
     
     if min_overall > 0.05:
-        print("   ✅ All samples have visible degradation")
+        print("    All samples have visible degradation")
     else:
-        print("   ⚠️  Some samples have minimal degradation")
+        print("     Some samples have minimal degradation")
     
     print("\n" + "="*70)
 

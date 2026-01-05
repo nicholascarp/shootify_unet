@@ -26,7 +26,7 @@ def compute_color_accuracy(pred, target, mask):
     
     # NEW: Normalize by mask area only
     mask_area = mask_3ch.sum() + 1e-8  # Avoid division by zero
-    color_mae = color_diff.sum() / mask_area  # ✅ Divides by mask pixels only
+    color_mae = color_diff.sum() / mask_area  # Divides by mask pixels only
     
     return color_mae.item()
 
@@ -50,11 +50,11 @@ def compute_mse(pred, target, mask=None):
         
         # NEW: Normalize by mask area only
         mask_area = mask_3ch.sum() + 1e-8
-        mse = squared_error.sum() / mask_area  # ✅ Divides by mask pixels only
+        mse = squared_error.sum() / mask_area  # Divides by mask pixels only
         
         return mse.item()
     else:
-        # Global MSE (no normalization needed)
+        # Global MSE
         return F.mse_loss(pred, target).item()
 
 def compute_psnr(pred, target, mask=None):

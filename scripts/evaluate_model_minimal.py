@@ -141,7 +141,7 @@ def visualize_samples(outputs, gts, degraded, masks, cloths, num_vis, save_path)
                  fontsize=16, fontweight='bold')
     plt.tight_layout()
     plt.savefig(save_path, dpi=150)
-    print(f"✅ Saved: {save_path}")
+    print(f" Saved: {save_path}")
     plt.close()
 
 
@@ -166,7 +166,7 @@ def main():
     print(f"\n🎮 Device: {device_type.upper()}")
     
     # Load dataset with REALISTIC settings (0% cloth mismatch)
-    print(f"\n📂 Loading test dataset...")
+    print(f"\n Loading test dataset...")
     test_dataset = UpperMaskDegradedDataset(
         args.test_manifest,
         img_size=256,
@@ -183,7 +183,7 @@ def main():
         num_workers=0
     )
     
-    print(f"✅ Loaded {len(test_dataset)} test samples ({len(test_loader)} batches)")
+    print(f" Loaded {len(test_dataset)} test samples ({len(test_loader)} batches)")
     print(f"   Cloth mismatch: 0% (realistic production scenario)")
     
     # Load model
@@ -198,7 +198,7 @@ def main():
     val_loss = checkpoint.get('val_loss', '?')
     
     num_params = sum(p.numel() for p in model.parameters())
-    print(f"✅ Model loaded:")
+    print(f" Model loaded:")
     print(f"   Parameters: {num_params:,}")
     print(f"   Trained epoch: {epoch}")
     print(f"   Train loss: {train_loss}")
@@ -208,15 +208,15 @@ def main():
     print(f"\n🔍 Evaluating model...")
     outputs, gts, degraded, masks, cloths, avg_loss = evaluate(model, test_loader, device)
     
-    print(f"✅ Evaluation complete")
+    print(f" Evaluation complete")
     print(f"   Average loss: {avg_loss:.6f}")
     
     # Compute metrics
-    print(f"\n📊 Computing metrics...")
+    print(f"\n Computing metrics...")
     metrics = compute_metrics(outputs, gts, masks)
     
     print(f"\n{'='*70}")
-    print("📊 FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL")
+    print(" FINAL EVALUATION RESULTS - V2.2 LIGHTING-AWARE MODEL")
     print("="*70)
     print(f"\nGlobal Metrics (Whole Image):")
     print(f"  MSE:  {metrics['mse_global']:.6f}")
@@ -230,33 +230,16 @@ def main():
     metrics_path = os.path.join(args.output_dir, 'metrics.json')
     with open(metrics_path, 'w') as f:
         json.dump(metrics, f, indent=2)
-    print(f"\n💾 Saved metrics: {metrics_path}")
+    print(f"\n Saved metrics: {metrics_path}")
     
     # Visualizations
-    print(f"\n📊 Creating visualizations...")
+    print(f"\n Creating visualizations...")
     vis_path = os.path.join(args.output_dir, 'evaluation_samples.png')
     visualize_samples(outputs, gts, degraded, masks, cloths, args.num_vis, vis_path)
-    
-    # Comparison with previous models
-    print(f"\n{'='*70}")
-    print("📈 COMPARISON WITH PREVIOUS MODELS")
-    print("="*70)
-    print(f"\n{'Model':<20} {'Color MAE':<12} {'PSNR (dB)':<12} {'Status'}")
-    print("-"*70)
-    print(f"{'V2':<20} {'0.084':<12} {'17.14':<12} {'Baseline'}")
-    print(f"{'V2.1':<20} {'0.068':<12} {'18.81':<12} {'Better'}")
-    print(f"{'V2.2 Lighting':<20} {metrics['color_mae']:<12.6f} {metrics['psnr_masked']:<12.2f} {'FINAL'}")
-    
-    # Calculate improvement
-    improvement_vs_v21 = ((0.068 - metrics['color_mae']) / 0.068) * 100
-    improvement_vs_v2 = ((0.084 - metrics['color_mae']) / 0.084) * 100
-    
-    print(f"\n🎯 Improvement:")
-    print(f"   vs V2.1 (Original): {improvement_vs_v21:+.1f}%")
-    print(f"   vs V2 (Smooth):     {improvement_vs_v2:+.1f}%")
+
     
     print("\n" + "="*70)
-    print("✅ EVALUATION COMPLETE!")
+    print(" EVALUATION COMPLETE!")
     print("="*70)
 
 

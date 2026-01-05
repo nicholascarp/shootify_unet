@@ -28,10 +28,10 @@ def load_model(checkpoint_path):
         model.load_state_dict(checkpoint['model_state_dict'])
         epoch = checkpoint.get('epoch', '?')
         val_loss = checkpoint.get('val_loss', '?')
-        print(f"✅ Loaded model from epoch {epoch}, val_loss: {val_loss}")
+        print(f" Loaded model from epoch {epoch}, val_loss: {val_loss}")
     else:
         model.load_state_dict(checkpoint)
-        print(f"✅ Loaded model weights")
+        print(f" Loaded model weights")
     
     model = model.to(device)
     model.eval()
@@ -57,7 +57,7 @@ def create_solid_color_cloth(color_rgb, size=256):
 def test_cloth_sensitivity(model, on_model_path, mask_path, device):
     """Test if changing cloth reference changes output"""
     
-    print(f"\n📂 Loading test image...")
+    print(f"\n Loading test image...")
     
     # Load on-model
     on_model = load_image(on_model_path).to(device)
@@ -91,7 +91,7 @@ def test_cloth_sensitivity(model, on_model_path, mask_path, device):
     
     results = {}
     
-    print(f"\n🎨 Testing with different cloth colors...")
+    print(f"\n Testing with different cloth colors...")
     
     with torch.no_grad():
         for name, rgb in test_colors.items():
@@ -107,10 +107,10 @@ def test_cloth_sensitivity(model, on_model_path, mask_path, device):
             output = output.squeeze(0).cpu()
             
             results[name] = output
-            print(f"   ✅ {name}")
+            print(f"    {name}")
     
     # Visualize
-    print(f"\n📊 Creating visualization...")
+    print(f"\n Creating visualization...")
     
     fig, axes = plt.subplots(3, 3, figsize=(15, 15))
     axes = axes.flatten()
@@ -144,11 +144,11 @@ def test_cloth_sensitivity(model, on_model_path, mask_path, device):
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig('outputs/cloth_sensitivity_production.png', dpi=150)
-    print(f"💾 Saved: outputs/cloth_sensitivity_production.png")
+    print(f" Saved: outputs/cloth_sensitivity_production.png")
     plt.show()
     
     # Check if outputs are different
-    print(f"\n🔍 Analyzing results...")
+    print(f"\n Analyzing results...")
     outputs_list = list(results.values())
     
     # Compare each output to the first one
@@ -160,13 +160,13 @@ def test_cloth_sensitivity(model, on_model_path, mask_path, device):
     
     print(f"\n{'='*70}")
     if max_diff < 0.01:
-        print("❌ MODEL IGNORES CLOTH REFERENCE")
+        print(" MODEL IGNORES CLOTH REFERENCE")
         print("   All outputs are nearly identical!")
     elif max_diff < 0.05:
-        print("⚠️  MODEL PARTIALLY USES CLOTH REFERENCE")
+        print("  MODEL PARTIALLY USES CLOTH REFERENCE")
         print("   Some variation, but limited color transfer")
     else:
-        print("✅ MODEL USES CLOTH REFERENCE!")
+        print(" MODEL USES CLOTH REFERENCE!")
         print("   Outputs change significantly with cloth color!")
         print("   Color transfer learned successfully!")
     print(f"{'='*70}")
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     on_model = 'raw_data/test/images/00006_00.jpg'
     mask = 'raw_data/test/image-parse-v3/00006_00.png'
     
-    print(f"\n📋 Configuration:")
+    print(f"\n Configuration:")
     print(f"   Checkpoint: {checkpoint}")
     print(f"   Test image: {on_model}")
     print(f"   Mask: {mask}")
@@ -193,5 +193,5 @@ if __name__ == '__main__':
     test_cloth_sensitivity(model, on_model, mask, device)
     
     print("\n" + "="*70)
-    print("✅ TEST COMPLETE!")
+    print(" TEST COMPLETE!")
     print("="*70)

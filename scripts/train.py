@@ -42,17 +42,17 @@ def get_device():
     if torch.cuda.is_available():
         device = torch.device('cuda')
         device_type = 'cuda'
-        print(f"🚀 Using CUDA GPU")
+        print(f" Using CUDA GPU")
     elif torch.backends.mps.is_available():
         # MPS can have issues, but let user decide
         device = torch.device('mps')
         device_type = 'mps'
-        print(f"🍎 Using MPS (Apple Silicon)")
+        print(f" Using MPS (Apple Silicon)")
         print(f"   Note: MPS may be slower than CPU for this model")
     else:
         device = torch.device('cpu')
         device_type = 'cpu'
-        print(f"💻 Using CPU")
+        print(f" Using CPU")
     
     return device, device_type
 
@@ -172,7 +172,7 @@ def main():
     print("="*70)
     print("PRODUCTION-QUALITY COLOR CORRECTION TRAINING")
     print("="*70)
-    print("\n📋 Configuration:")
+    print("\n Configuration:")
     print(f"   Train manifest: {args.train_manifest}")
     print(f"   Test manifest: {args.test_manifest}")
     print(f"   Output dir: {args.output_dir}")
@@ -187,7 +187,7 @@ def main():
     device, device_type = get_device()
     
     # Create datasets
-    print("\n📂 Loading datasets...")
+    print("\n Loading datasets...")
     train_dataset = UpperMaskDegradedDataset(
         args.train_manifest,
         img_size=args.img_size,
@@ -221,8 +221,8 @@ def main():
         pin_memory=(device_type == 'cuda')
     )
     
-    print(f"✅ Train samples: {len(train_dataset)} ({len(train_loader)} batches)")
-    print(f"✅ Test samples: {len(test_dataset)} ({len(test_loader)} batches)")
+    print(f" Train samples: {len(train_dataset)} ({len(train_loader)} batches)")
+    print(f" Test samples: {len(test_dataset)} ({len(test_loader)} batches)")
     
     # Create model
     print("\n🏗️  Creating model...")
@@ -231,7 +231,7 @@ def main():
     
     # Count parameters
     num_params = sum(p.numel() for p in model.parameters())
-    print(f"✅ Model created with {num_params:,} parameters")
+    print(f" Model created with {num_params:,} parameters")
     
     # Optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -250,7 +250,7 @@ def main():
     best_val_loss = float('inf')
     
     # Training loop
-    print("\n🚀 Starting training...")
+    print("\n Starting training...")
     print("="*70)
     
     for epoch in range(1, args.epochs + 1):
@@ -272,7 +272,7 @@ def main():
         history['val_components'].append(val_components)
         
         # Print results
-        print(f"\n📊 Epoch {epoch} Results:")
+        print(f"\n Epoch {epoch} Results:")
         print(f"   Train Loss: {train_loss:.6f}")
         print(f"   Val Loss:   {val_loss:.6f}")
         print(f"\n   Train Components:")
@@ -299,22 +299,22 @@ def main():
             best_val_loss = val_loss
             best_path = os.path.join(args.output_dir, 'model_best.pth')
             torch.save(checkpoint, best_path)
-            print(f"💾 Saved best model: {best_path}")
+            print(f" Saved best model: {best_path}")
         else:
-            print(f"💾 Saved checkpoint: {checkpoint_path}")
+            print(f" Saved checkpoint: {checkpoint_path}")
     
     # Save training history
     history_path = os.path.join(args.output_dir, 'training_history.json')
     with open(history_path, 'w') as f:
         json.dump(history, f, indent=2)
-    print(f"\n💾 Saved training history: {history_path}")
+    print(f"\n Saved training history: {history_path}")
     
     print("\n" + "="*70)
-    print("✅ TRAINING COMPLETE!")
+    print(" TRAINING COMPLETE!")
     print("="*70)
-    print(f"\n📊 Best validation loss: {best_val_loss:.6f}")
-    print(f"📂 Output directory: {args.output_dir}")
-    print(f"🎯 Best model: {os.path.join(args.output_dir, 'model_best.pth')}")
+    print(f"\n Best validation loss: {best_val_loss:.6f}")
+    print(f" Output directory: {args.output_dir}")
+    print(f" Best model: {os.path.join(args.output_dir, 'model_best.pth')}")
     print("="*70 + "\n")
 
 

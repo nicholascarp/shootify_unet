@@ -20,7 +20,7 @@ def test_minimal_model():
     device = torch.device('cpu')
     
     # Minimal model
-    print("\n🏗️  Creating MINIMAL model...")
+    print("\n  Creating MINIMAL model...")
     model = MinimalUNet(in_channels=7).to(device)
     model.train()
     
@@ -45,7 +45,7 @@ def test_minimal_model():
     gt = batch['gt'].to(device)
     cloth = batch['cloth'].to(device)
     
-    print(f"\n⏱️  Testing 5 iterations...")
+    print(f"\n  Testing 5 iterations...")
     
     times = []
     for i in range(5):
@@ -63,17 +63,17 @@ def test_minimal_model():
     
     avg_time = sum(times) / len(times)
     
-    print(f"\n📊 Results:")
+    print(f"\n Results:")
     print(f"   Average: {avg_time:.2f}s")
     print(f"   Expected per epoch: {avg_time * 2912 / 60:.1f} minutes")
     print(f"   Total training (15 epochs): {avg_time * 2912 * 15 / 3600:.1f} hours")
     
     if avg_time < 5:
-        print("\n✅ EXCELLENT! Fast enough to train!")
+        print("\n EXCELLENT! Fast enough to train!")
     elif avg_time < 15:
-        print("\n⚠️  Slower but workable")
+        print("\n  Slower but workable")
     else:
-        print("\n❌ Still too slow - need different approach")
+        print("\n Still too slow - need different approach")
 
 
 if __name__ == '__main__':
