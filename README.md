@@ -102,7 +102,16 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 ---
 
 ## **Results**
-You can visualize results in outputs folder
+**You can visualize results in outputs folder**
+Model Evaluation:
+
+- evaluation_samples.png
+- batch_inference_FIXED
+Model and Code checks:
+
+- cloth_sensitivity_production.png
+- degradation_validation_comprehensive.png
+- test_lighting_aware_cloth
 
 ---
 
