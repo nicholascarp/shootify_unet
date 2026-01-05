@@ -101,6 +101,10 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ---
 
+## **Results**
+You can visualize results in outputs folder
+
+---
 
 ## **Key Features**
 
@@ -127,7 +131,7 @@ Step 5: outputs/batch_inference_FIXED.png (7-column visualization)
 
 ---
 
-## 📁 **Project Structure**
+## **Project Structure**
 
 ```
 .
